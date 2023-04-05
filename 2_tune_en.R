@@ -30,17 +30,20 @@ wildfires_interact <- wildfires_recipe1 %>%
 prep(wildfires_interact) %>% 
   bake(new_data = NULL)
 
+en_workflow <- workflow() %>% 
+  add_model(en_model) %>% 
+  add_recipe(wildfires_interact)
+
 ##### TUNE GRID ########################################################
 tic.clearlog()
 tic("Elastic Net")
 
-en_tuned <- tune_grid(workflow,
+en_tuned <- tune_grid(en_workflow,
                          resamples = wildfires_folds,
-                         grid = grid,
+                         grid = en_grid,
                          control = control_grid(save_pred = TRUE, 
                                                 save_workflow = TRUE,
-                                                parallel_over = "everything"),
-                         metrics = metrics)
+                                                parallel_over = "everything"))
 
 toc(log = TRUE)
 time_log <- tic.log(format = FALSE)
@@ -50,4 +53,6 @@ en_tictoc <- tibble(
   #runtime = end time - start time
   runtime = time_log[[1]]$toc - time_log[[1]]$tic
 )
+
+save(en_tuned, en_tictoc, file = "results/en_tuned")
 
