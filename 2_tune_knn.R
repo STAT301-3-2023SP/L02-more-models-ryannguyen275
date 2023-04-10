@@ -35,8 +35,7 @@ knn_tuned <- tune_grid(knn_workflow,
                       grid = knn_grid,
                       control = control_grid(save_pred = TRUE, 
                                              save_workflow = TRUE,
-                                             parallel_over = "everything"),
-                      metrics = metrics)
+                                             parallel_over = "everything"))
 
 toc(log = TRUE)
 time_log <- tic.log(format = FALSE)
@@ -47,5 +46,6 @@ knn_tictoc <- tibble(
   runtime = time_log[[1]]$toc - time_log[[1]]$tic
 )
 
+save(knn_tuned, knn_tictoc, file = "results/knn_tuned.rda")
 
 

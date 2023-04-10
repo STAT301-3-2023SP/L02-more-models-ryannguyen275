@@ -47,6 +47,7 @@ wildfires_recipe1 <- recipe(wlf ~., data = wildfires_train) %>%
   # accept new levels in testing data if not seen in training data
   step_novel(all_nominal_predictors()) %>% 
   step_dummy(all_nominal_predictors()) %>% 
+  # put zv before normalize because denom =/ 0
   step_zv(all_predictors()) %>%  
   step_normalize(all_predictors())
 

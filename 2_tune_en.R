@@ -27,8 +27,8 @@ en_grid <- grid_regular(en_param, levels = 5)
 wildfires_interact <- wildfires_recipe1 %>% 
   step_interact(~all_numeric_predictors()^2)
 
-prep(wildfires_interact) %>% 
-  bake(new_data = NULL)
+# prep(wildfires_interact) %>% 
+#   bake(new_data = NULL)
 
 en_workflow <- workflow() %>% 
   add_model(en_model) %>% 
@@ -48,11 +48,9 @@ en_tuned <- tune_grid(en_workflow,
 toc(log = TRUE)
 time_log <- tic.log(format = FALSE)
 
-en_tictoc <- tibble(
-  model = time_log[[1]]$msg,
-  #runtime = end time - start time
-  runtime = time_log[[1]]$toc - time_log[[1]]$tic
-)
+en_tictoc <- tibble(model = time_log[[1]]$msg,
+                    #runtime = end time - start time
+                    runtime = time_log[[1]]$toc - time_log[[1]]$tic)
 
-save(en_tuned, en_tictoc, file = "results/en_tuned")
+save(en_tuned, en_tictoc, file = "results/en_tuned.rda")
 

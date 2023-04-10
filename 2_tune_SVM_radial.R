@@ -1,4 +1,4 @@
-# Random Forest Tuning
+# SVM Radial Tuning
 
 ##### LOAD PACKAGES/DATA ##############################################
 
@@ -14,27 +14,26 @@ tidymodels_prefer ()
 load("results/tuning_setup.rda")
 
 ##### DEFINE ENGINES/WORKFLOWS #########################################
-rf_model <- rand_forest(min_n = tune(),
-                        mtry = tune()) %>% 
-  set_engine("ranger", importance = "impurity") %>% 
-  set_mode("classification")
+svm_radial_model <- svm_rbf(mode = "classification",
+                            cost = tune(),
+                            rbf_sigma = tune()) %>%
+  set_engine("kernlab")
 
-rf_param <- extract_parameter_set_dials(rf_model) %>% 
-  update(mtry = mtry(range = c(1,13)))
+svm_radial_param <- extract_parameter_set_dials(svm_radial_model)
 
-rf_grid <- grid_regular(rf_param, levels = 5)
+svm_radial_grid <- grid_regular(svm_radial_param, levels = 5)
 
-rf_workflow <- workflow() %>% 
-  add_model(rf_model) %>% 
+svm_radial_workflow <- workflow() %>% 
+  add_model(svm_radial_model) %>% 
   add_recipe(wildfires_recipe1)
 
 ##### TUNE GRID ########################################################
 tic.clearlog()
-tic("Random Forest")
+tic("SVM Radial")
 
-rf_tuned <- tune_grid(rf_workflow,
+svm_radial_tuned <- tune_grid(svm_radial_workflow,
                        resamples = wildfires_folds,
-                       grid = rf_grid,
+                       grid = svm_radial_grid,
                        control = control_grid(save_pred = TRUE, 
                                               save_workflow = TRUE,
                                               parallel_over = "everything"))
@@ -42,10 +41,11 @@ rf_tuned <- tune_grid(rf_workflow,
 toc(log = TRUE)
 time_log <- tic.log(format = FALSE)
 
-rf_tictoc <- tibble(
+svm_radial_tictoc <- tibble(
   model = time_log[[1]]$msg,
   #runtime = end time - start time
   runtime = time_log[[1]]$toc - time_log[[1]]$tic
 )
 
-save(rf_tuned, rf_tictoc, file = "results/rf_tuned.rda")
+save(svm_radial_tuned, svm_radial_tictoc, file = "results/svm_radial_tuned.rda")
+

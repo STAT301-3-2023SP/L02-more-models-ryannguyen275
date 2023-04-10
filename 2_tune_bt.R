@@ -22,7 +22,7 @@ bt_model <- boost_tree(mode = "classification",
 
 
 bt_param <- extract_parameter_set_dials(bt_model) %>% 
-  update(mtry = mtry(range = c(1,10)))
+  update(mtry = mtry(range = c(1,13)))
 
 bt_grid <- grid_regular(bt_param, levels = 5)
 
@@ -47,7 +47,6 @@ time_log <- tic.log(format = FALSE)
 bt_tictoc <- tibble(
   model = time_log[[1]]$msg,
   #runtime = end time - start time
-  runtime = time_log[[1]]$toc - time_log[[1]]$tic
-)
+  runtime = time_log[[1]]$toc - time_log[[1]]$tic)
 
-save(bt_tuned, bt_tictoc, file = "results/bt_tuned")
+save(bt_tuned, bt_tictoc, file = "results/bt_tuned.rda")
