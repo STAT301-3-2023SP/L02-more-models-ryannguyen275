@@ -47,4 +47,4 @@ nn_tictoc <- tibble(
   runtime = time_log[[1]]$toc - time_log[[1]]$tic
 )
 
-save(nn_tuned, nn_tictoc, file = "results/nn_tuned.rda")
+save(nn_tuned, nn_tictoc, nn_workflow, file = "results/nn_tuned.rda")
