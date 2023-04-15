@@ -60,7 +60,7 @@ model_set <- as_workflow_set(
 
 ##### plot of our results ###########
 
-model_set %>% 
+results_graph <- model_set %>% 
   autoplot(metric = "roc_auc", select_best = TRUE) +
   theme_minimal() +
   geom_text(aes(y = mean - 0.03, label = wflow_id), angle = 90, hjust = 1) +
@@ -100,7 +100,10 @@ result_table <- merge(model_results, model_times) %>%
 
 result_table
 
-save(result_table, file = "results/result_table.rda")
+nn_tuned %>% 
+  show_best()
+
+save(result_table, results_graph, file = "results/result_table.rda")
 
 ##### FINALIZE RESULTS #############################################
 
@@ -112,17 +115,27 @@ nn_workflow <- nn_workflow %>%
 fit_final <- fit(nn_workflow, wildfires_train)
 
 # predict the testing data 
-wildfires_pred <- predict(fit_final, wildfires_test) %>% 
+wildfires_pred_class <- predict(fit_final, wildfires_test) %>% 
   bind_cols(wildfires_test %>% select(wlf))
 
-wildfires_metric <- metric_set(roc_auc)
+wildfires_pred <- wildfires_test %>%
+  bind_cols(predict(fit_final, new_data = wildfires_test, type = "prob"))  %>%
+  select(wlf, .pred_yes, .pred_no)
 
-wildfires_pred %>% 
-  wildfires_metric(truth = wlf, estimate = .pred)
+wildfires_pred
 
 # final roc_auc 
+roc_auc <- yardstick::roc_auc(wildfires_pred, truth = wlf, .pred_yes)
+
+accuracy <- accuracy(wildfires_pred_class, wlf, .pred_class)
 
 # confusion plot of results 
+conf_matrix <- conf_mat(wildfires_pred_class, wlf, .pred_class)
+
+conf_matrix
+
+save(conf_matrix, accuracy, wildfires_pred_class, wildfires_pred, roc_auc, file = "results/final_results.rda")
+
 
 
 
