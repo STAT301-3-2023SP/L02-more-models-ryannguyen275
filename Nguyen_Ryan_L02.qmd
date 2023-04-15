@@ -101,29 +101,6 @@ A short write-up that includes:
 3. Final selection, training, and evaluation of the best model. 
 
 
-## Executive Summary
-- 3-4 paragraphs
-- don't include why chose dataset
-- no section headers, maybe 2-3 if any
-
-1. What is goal of report?
-- We have 500 wildfires, we are predicting if a wildfire will reach the wildlife protection zone.
-- explain dataset. where from? what does data contain
-
-2. what did we do
-- choose varibles/predictions, tuned
-- predicted whether or not wildfire will reach wildlife protection zone using 8 different models 
-- all 14 variables were used 
-- explain cross validation/training/testing process and evaluation method 
-
-table here
-graph here
-
-explain best overall model and best tuning paramters. show final results on testing data. what was final roc_auc and confusion matrix
-
-conclusions. anything else important to say.
-
-
 
 
 

@@ -33,7 +33,7 @@ result_table
 results_graph
 ```
 
-The neural network model had the highest `roc_auc` with 0.8978, followed by the SVM Polynomial with 0.8854, then the elastic net with 0.8821. Since the neural network performed the best, it will be chosen as the final model. The parameters for this best model was `hidden_units` tuned to 7 and `penalty` tuned to 1.
+The neural network model had the highest `roc_auc` with 0.8978, which took 86 seconds to run, followed by the SVM Polynomial with 0.8854, then the elastic net with 0.8821. Since the neural network performed the best, it will be chosen as the final model. The parameters for this best model was `hidden_units` tuned to 7 and `penalty` tuned to 1.
 
 The entire training data was fit to the neural network model, and the testing model was predicted.
 
