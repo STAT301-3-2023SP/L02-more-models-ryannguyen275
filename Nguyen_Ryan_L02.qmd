@@ -33,8 +33,13 @@ The main goals of this lab are (1) review and practice the application of machin
 ```{r}
 library(doMC)
 registerDoMC(cores = 4)
-
+library(tidyverse)
+library(tidymodels)
+load("results/result_table.rda")
+load("results/final_results.rda")
 ```
+
+
 
 
 ## Dataset
@@ -100,9 +105,35 @@ A short write-up that includes:
 
 3. Final selection, training, and evaluation of the best model. 
 
+## Predicting Wildfires
 
+In this project, a dataset that describes 500 wildfires that started within a large national park was used to predict whether or not a fire would reach the wildlife protection zone, based on other variables. For each fire, the data contains 15 numeric variables (including temperature and humidity when fire started, number of days since last fire, coordinates, etc.) as well as two outcome variables (`burned`, which was not used in this project, and whether or not the fire reached the wildlife protection zone, `wlf`). Using a supervised machine learning process, we can predict whether or not a fire would reach the wildlife protection zone, which can be incredibly important in protecting wildlife and taking preventative measures.
 
+To begin, the dataset was collected, cleaned, and prepared for machine learning. There was no missingness, nor class imbalance with the outcome variable, `wlf`, found, so imputation and down/upsampling were not utilized respectively. The data was then split into a training and testing data set, with a 0.8 proportion, stratified on `wlf`. The training data was split using v-fold cross-validation, into 5 sets of roughly equal size, 3 repeats, and stratified on `wlf`. A recipe was prepped and baked using all variables except `burned`, `step_novel()` was used to accept new levels in testing data if not seen in training data, `step_dummy()` was used to convert nominal data into numeric terms, `step_zv()` was used to remove variables that contain only a single value (and would therefore be useless in prediction), and finally `step_normalize()` was used to normalize all variables.
 
+The 8 models used in this project was elastic net, k-nearest neighbors, random forest, boosted tree, support vector machine (polynomial), support vector machine (radial), single layer neural network, and multivariate adaptive regression splines (MARS). The models each had their engines set with tuning parameters and grids, and the grids were tuned in separate scripts. The time it took to run each model was also recorded. The best parameters of each model that results with the highest area under the receiver operator curve (`roc_auc`) was selected and the best of each model was compared, with the results shown in the table and graph below.
 
+```{r}
+result_table
+results_graph
+```
+
+The neural network model had the highest `roc_auc` with 0.8978, which took 86 seconds to run, followed by the SVM Polynomial with 0.8854, then the elastic net with 0.8821. Since the neural network performed the best, it will be chosen as the final model. The parameters for this best model was `hidden_units` tuned to 7 and `penalty` tuned to 1.
+
+The entire training data was fit to the neural network model, and the testing model was predicted.
+
+```{r}
+roc_auc
+```
+
+The final `roc_auc` after fitting the neural network model to the testing data is 0.8676. While this is lower than the 0.8978 found with the folds, it still means the model performed moderately well, since an `roc_auc` of 1 would be a perfect prediction model.
+
+```{r}
+conf_matrix
+
+accuracy
+```
+
+Finally, above shows the confusion matrix of these results. The model predicted 37 yeses and 44 nos correctly, and 10 yeses incorrectly and 10 nos incorrectly. The model performed moderately well, correctly predicting about 80 percent. This model can be helpful for park rangers and fire departments in predicting whether or not a fire would reach the wildlife protection zone. 
 
 
